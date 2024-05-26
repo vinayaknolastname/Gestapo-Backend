@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package pb;
+
+import "api/proto/google/api/annotations.proto";
+import "api/proto/common_service.proto";
+
+option go_package = "api/proto";
+
+
+message AddCategoryRequest {
+    string category_name = 1;
+}
+
+message CategoryRes {
+	string id = 1;     
+	string category = 2;
+}
+
+message GetCategoryResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated CategoryRes data = 4;
+}
+
+message CreatePromocodeRequest {
+    string code = 1;
+    string title = 2;
+    string description = 3;
+    float percentage = 4;
+}
+
+message GetPromocodeResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated PromocodeResponse data = 4;
+}
+
+message PromocodeResponse {
+    string promo_id = 1;
+    string code = 2;
+    string title = 3;
+    string discription = 4;
+    float percentage = 5;
+}
+
+service AdminService {
+    rpc CreateCategory (AddCategoryRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/admin/category"
+            body: "*"
+        };
+    }
+
+    rpc GetCategories (Request) returns (GetCategoryResponse) {
+        option (google.api.http) = {
+            get: "/admin/category"
+        };
+    }
+
+    rpc GetUsers (Request) returns (GetUsersResponse) {
+        option (google.api.http) = {
+            get: "/admin/user"
+        };
+    }
+
+    rpc CreatePromocode (CreatePromocodeRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/admin/promocode"
+            body: "*"
+        };
+    }
+
+    rpc GetPromocodes (Request) returns (GetPromocodeResponse) {
+        option (google.api.http) = {
+            get: "/admin/promocode"
+        };
+    }
+}

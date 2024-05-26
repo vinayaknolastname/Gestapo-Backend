@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package pb;
+
+import "api/proto/google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "api/proto/common_service.proto";
+
+option go_package = "api/proto";
+
+message GetMerchantProfileRequest {
+    string user_id = 1;
+}
+
+message MerchantResponse  {
+	string id = 1;
+    optional string profile_image = 2;
+    optional string full_name = 3;
+    string user_name = 4;
+    optional string phone = 5;
+    optional string email = 6;
+    optional google.protobuf.Timestamp dob = 7;
+    optional string gender = 8;
+    string user_type = 9;
+}
+
+message GetMerchantProfileResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    MerchantResponse data = 4;
+}
+
+
+message AddDiscountRequest {
+	string product_id = 1;
+	string name = 2;
+    string description =3;
+    fixed64 percentage = 4;
+    string card_color = 5;
+    google.protobuf.Timestamp start_time = 6;
+    google.protobuf.Timestamp end_time = 7;
+}
+
+message EditDiscountRequest {
+	string discount_id = 1;
+	string name = 2;
+    string description =3;
+    fixed64 percentage = 4;
+    string card_color = 5;
+    google.protobuf.Timestamp start_time = 6;
+    google.protobuf.Timestamp end_time = 7;
+}
+
+message DeleteProductRequest {
+    string product_id = 1;
+}
+
+message GetDiscountsRequest {
+    optional string merchant_id = 1;
+}
+message GetDiscountsResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated DiscountResponse data = 4;
+}
+
+
+service MerchantService {
+    rpc GetProfile (GetMerchantProfileRequest) returns (GetMerchantProfileResponse) {
+        option (google.api.http) = {
+            get: "/merchant/profile/{user_id}"
+        };
+    }
+
+    rpc GetProducts (GetProductRequest) returns (GetProductsResponse) {
+        option (google.api.http) = {
+            post: "/merchant/products"
+            body: "*"
+        };
+    }
+
+    rpc DeleteProduct (DeleteProductRequest) returns (Response) {
+        option (google.api.http) = {
+            delete: "/merchant/product/{product_id}"
+        };
+    }
+
+    rpc AddProductDiscount (AddDiscountRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/merchant/product/discount"
+            body: "*"
+        };
+    }
+
+    rpc EditProductDiscount (EditDiscountRequest) returns (Response) {
+        option (google.api.http) = {
+            patch: "/merchant/product/discount/{discount_id}"
+            body: "*"
+        };
+    }
+
+    rpc GetAllDiscounts (GetDiscountsRequest) returns (GetDiscountsResponse) {
+        option (google.api.http) = {
+            post: "/merchant/product/discounts"
+            body: "*"
+        };
+    }
+
+    //------ Order Related------------
+    rpc GetMerchantOrders (GetOrdersRequest) returns (GetOrderResponse){
+        option (google.api.http) = {
+            get: "/merchant/order/{type}"
+        };
+    }
+
+    rpc UpdateOrderStatus (UpdateOrderRequest) returns (Response){
+        option (google.api.http) = {
+            patch: "/merchant/order/{order_item_id}"
+            body: "*"
+        };
+    }
+}

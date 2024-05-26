@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package pb;
+
+import "api/proto/google/api/annotations.proto";
+import "api/proto/common_service.proto";
+
+option go_package = "api/proto";
+
+message ProductIdRequest {
+    string product_id = 1;
+}
+
+service ProductService {
+    rpc GetProducts (GetProductRequest) returns (GetProductsResponse);
+    rpc AddProductReview (AddReviewRequest) returns (Response);
+
+    rpc GetProductById (ProductIdRequest) returns (GetProductByIdResponse) {
+        option (google.api.http) = {
+            get: "/product/{product_id}"
+        };
+    }
+
+    rpc GetProductReviews (ProductIdRequest) returns (Response) {
+        option (google.api.http) = {
+            get: "/product/review/{product_id}"
+        };
+    }
+}

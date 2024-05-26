@@ -1,0 +1,109 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres16
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=gestapo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d gestapo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis7.2
+    restart: always  
+    ports:
+      - 6379:6379
+    depends_on:
+      postgres:
+        condition: service_healthy  
+
+  grpc-gateway:
+    build:
+      context: ./
+      dockerfile: ./grpc-gateway.dockerfile
+    ports:
+      - "9000:80"
+    depends_on:
+      - authentication-service
+      - admin-service
+      - user-service
+      - merchant-service
+      - product-service
+      - order-service
+       
+
+  authentication-service:
+    build:
+      context: ./
+      dockerfile: ./authentication-service.dockerfile    
+    ports:
+      - "9001:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy  
+
+  admin-service:
+    build:
+      context: ./
+      dockerfile: ./admin-service.dockerfile   
+    ports:
+      - "9002:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy 
+
+  user-service:
+    build:
+      context: ./
+      dockerfile: ./user-service.dockerfile
+    ports:
+      - "9003:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy          
+
+  merchant-service:
+    build:
+      context: ./
+      dockerfile: ./merchant-service.dockerfile
+    ports:
+      - "9004:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy 
+
+  product-service:
+    build:
+      context: ./
+      dockerfile: ./product-service.dockerfile
+    ports:
+      - "9005:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy 
+
+  order-service:
+    build:
+      context: ./
+      dockerfile: ./order-service.dockerfile
+    ports:
+      - "9006:80"      
+    restart: always  
+    depends_on:
+      postgres:
+        condition: service_healthy         

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-gateway-deployment
+  labels:
+    app: grpc-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-gateway
+  template:
+    metadata:
+      labels:
+        app: grpc-gateway
+    spec:
+      containers:
+        - name: grpc-gateway
+          image: gestapo/gateway:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9000

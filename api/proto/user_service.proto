@@ -1,0 +1,226 @@
+syntax = "proto3";
+
+package pb;
+
+import "api/proto/common_service.proto";
+import "api/proto/google/api/annotations.proto";
+
+
+option go_package = "api/proto";
+
+message GetHomeResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    HomeResponse data = 4;
+}
+
+message HomeResponse {
+	DiscountResponse  discount = 1; 
+    repeated UserResponse merchants = 2;
+    repeated ProductResponse products = 3;
+}
+
+message AddRemoveWishlistRequest {
+    string action = 1;
+    string product_id = 2;
+}
+
+message GetWishlistResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated ProductResponse data = 4;
+}
+
+message AddToCartRequest {
+    string product_id = 1;
+    float size = 2;
+    int32 quantity = 3;
+    float price = 4; 
+}
+
+message CheckoutCartItemsRequest{
+    string cart_id = 1;
+    repeated CheckoutRequest data = 2;
+}
+
+message CheckoutRequest {
+    string cart_item_id = 1;
+    int32 quantity = 2;
+}
+
+message GetCartItemsResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated CartItemResponse data = 4;
+}
+
+message CartItemResponse {
+    string cart_id = 1;
+    string cart_item_id = 2;
+    string product_image = 3;
+    string name = 4;
+    float size = 5;
+    float price = 6;
+    int32 quantity = 7;
+    int32 available_quantity = 8;
+}
+
+message RemoveFromCartRequest {
+    string cart_item_id = 1;
+}
+
+message AddAddressRequest {
+    string title = 1;
+    string address_line = 2;
+    string country = 3;
+    string city = 4;
+    optional int64 postal_code = 5; 
+    optional string landmark = 6;
+    optional bool is_default = 7;
+}
+
+message GetAddressesResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    repeated AddressesResponse data = 4;
+}
+
+message GetAddressByIdResponse {
+    int32 code = 1;
+    bool status = 2;
+    string message = 3;
+    AddressesResponse data = 4;
+}
+
+message AddressesResponse{
+    string address_id = 1;
+    string title = 2;
+    string address_line = 3;
+    optional string country = 4;
+    optional string city = 5;
+    optional int64 postal_code = 6; 
+    optional string landmark = 7;
+    optional bool is_default = 8;
+}
+
+message AddressIdRequest {
+    string address_id = 1;
+}
+
+message EditAddressRequest {
+    string address_id = 1;
+    optional string title = 2;
+    optional string address_line = 3;
+    optional string country = 4;
+    optional string city = 5;
+    optional int64 postal_code = 6; 
+    optional string landmark = 7;
+    optional bool is_default = 8;
+}
+
+
+service UserServie {
+    rpc GetHome (Request) returns (GetHomeResponse) {
+        option (google.api.http) = {
+            get: "/user/home"
+        };
+    } 
+
+    rpc AddRemoveWishlist (AddRemoveWishlistRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/user/wishlist"
+            body: "*"
+        };
+    }
+
+    rpc GetWishlist (Request) returns (GetWishlistResponse) {
+        option (google.api.http) = {
+            get: "/user/wishlist"
+        };
+    } 
+
+    //------ Cart Related------------
+    rpc AddProductToCart (AddToCartRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/user/cart"
+            body: "*"
+        };
+    } 
+
+    rpc GetCartItmes (Request) returns (GetCartItemsResponse) {
+        option (google.api.http) = {
+            get: "/user/cart"
+        };
+    }
+
+    rpc CheckoutCartItems (CheckoutCartItemsRequest) returns (Response) {
+        option (google.api.http) = {
+            patch: "/user/cart/{cart_id}"
+            body: "*"
+        };
+    } 
+
+    rpc RemoveProductFromCart (RemoveFromCartRequest) returns (Response) {
+        option (google.api.http) = {
+            delete: "/user/cart/{cart_item_id}"
+        };
+    } 
+    //------ Address Related------------
+    rpc AddAddress (AddAddressRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/user/address"
+            body: "*"
+        };
+    } 
+
+    rpc GetAddresses (Request) returns (GetAddressesResponse) {
+        option (google.api.http) = {
+            get: "/user/address"
+        };
+    }
+    
+    rpc GetAddressByID (AddressIdRequest) returns (GetAddressByIdResponse) {
+        option (google.api.http) = {
+            get: "/user/address/{address_id}"
+        };
+    } 
+
+    rpc EditAddress (EditAddressRequest) returns (Response) {
+        option (google.api.http) = {
+            patch: "/user/address/{address_id}"
+            body: "*"
+        };
+    } 
+
+    rpc DeleteAddress (AddressIdRequest) returns (Response) {
+        option (google.api.http) = {
+            delete: "/user/address/{address_id}"
+        };
+    } 
+
+    //------ Order Related------------
+    rpc CreateOrder (CreateOrderRequest) returns (Response){
+        option (google.api.http) = {
+            post: "/user/order"
+            body: "*"
+        };
+    }
+
+    rpc GetUserOrders (GetOrdersRequest) returns (GetOrderResponse){
+        option (google.api.http) = {
+            get: "/user/order/{type}"
+        };
+    }
+
+    //------- Product Review
+    rpc AddProductReview (AddReviewRequest) returns (Response){
+        option (google.api.http) = {
+            post: "/user/product/review"
+            body:"*"
+        };
+    }
+}

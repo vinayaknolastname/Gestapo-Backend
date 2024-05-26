@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package pb;
+
+import "api/proto/common_service.proto";
+import "api/proto/google/api/annotations.proto";
+
+option go_package = "api/proto";
+
+message SendOTPRequest {
+   string email = 1;
+   string phone = 2;
+   string action = 3;
+}
+
+message SignupRequest {
+    string email = 1;
+    string phone = 2;
+    string full_name = 3;
+    string user_name = 4;
+    string user_type = 5;
+    string code = 6;
+    string password = 7;
+}
+
+message LoginRequest {
+    string user_name = 1;
+    string password = 2;
+}
+
+message ForgotPasswordRequest {
+    string email = 1;
+    string phone = 2;
+    string code = 3;
+    string password = 4;
+}
+
+message SsoRequest {
+    string user_type = 1;
+    string action = 2;
+}
+
+
+service AuthenticationService {
+    rpc SendOTP (SendOTPRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/auth/send-otp"
+            body: "*"
+        };
+    }
+
+    rpc SignUpUser (SignupRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/auth/signup"
+            body: "*"
+        };
+    }
+
+    rpc LoginUser (LoginRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/auth/login"
+            body: "*"
+        };
+    }
+
+    rpc ForgotPassword (ForgotPasswordRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/auth/forgot-password"
+            body: "*"
+        };
+    } 
+    
+    rpc SSOAuth (SsoRequest) returns (Response) {
+        option (google.api.http) = {
+            post: "/auth/sso-auth"
+            body: "*"
+        };
+    } 
+}

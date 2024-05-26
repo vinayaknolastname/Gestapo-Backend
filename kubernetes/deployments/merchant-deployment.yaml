@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: merchant-deployment
+  labels:
+    app: merchant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: merchant
+  template:
+    metadata:
+      labels:
+        app: merchant
+    spec:
+      containers:
+        - name: merchant
+          image: gestapo/merchant:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
